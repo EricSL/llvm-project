@@ -34,10 +34,12 @@ struct is_execution_policy
 constexpr sequential_execution_policy seq{};
 constexpr parallel_execution_policy par{};
 
+#if LLVM_ENABLE_THREADS
 // Strategy for the default executor used by the parallel routines provided by
 // this file. It defaults to using all hardware threads and should be
 // initialized before the first use of parallel routines.
 extern ThreadPoolStrategy strategy;
+#endif  // LLVM_ENABLE_THREADS
 
 namespace detail {
 

@@ -381,6 +381,7 @@ static void readConfigs(opt::InputArgList &args) {
   // --threads= takes a positive integer and provides the default value for
   // --thinlto-jobs=.
   if (auto *arg = args.getLastArg(OPT_threads)) {
+#if LLVM_ENABLE_THREADS
     StringRef v(arg->getValue());
     unsigned threads = 0;
     if (!llvm::to_integer(v, threads, 0) || threads == 0)
@@ -388,6 +389,9 @@ static void readConfigs(opt::InputArgList &args) {
             arg->getValue() + "'");
     parallel::strategy = hardware_concurrency(threads);
     config->thinLTOJobs = v;
+#else
+    error(arg->getSpelling() + ": threads not supported");
+#endif    
   }
   if (auto *arg = args.getLastArg(OPT_thinlto_jobs))
     config->thinLTOJobs = arg->getValue();
